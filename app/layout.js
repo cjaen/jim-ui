@@ -13,15 +13,21 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <head>
+        <title>GYMMY</title>
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#ffffff"></meta>
+      </head>
       <body className={inter.className}>
         <Layout style={{ minHeight: "100vh" }}>
           <Sider
-            style={{ backgroundColor: "black" }}
+            style={{ backgroundColor: "#5e17eb" }}
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
+            trigger={null}
           ></Sider>
-          <Layout style={{ backgroundColor: "white" }}>
+          <Layout>
             <Header
               style={{
                 position: "sticky",
@@ -30,10 +36,10 @@ export default function RootLayout({ children }) {
                 width: "100%",
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "gray",
+                backgroundColor: "white",
               }}
             />
-            <Content style={{ top: "50px", backgroundColor: "red" }}>
+            <Content style={{ top: "50px", backgroundColor: "#efefef" }}>
               {children}
             </Content>
 
