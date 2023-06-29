@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "version": "next --version"
   },
   "dependencies": {
     "antd": "^5.6.2",
@@ -21,8 +22,5 @@
   },
   "resolutions": {
     "styled-components": "^5"
-  },
-  "devDependencies": {
-    "next": "^13.4.0"
   }
 }
