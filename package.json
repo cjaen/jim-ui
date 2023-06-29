@@ -21,8 +21,5 @@
   },
   "resolutions": {
     "styled-components": "^5"
-  },
-  "devDependencies": {
-    "next": "^13.4.0"
   }
 }
