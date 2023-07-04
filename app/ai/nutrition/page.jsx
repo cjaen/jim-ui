@@ -1,10 +1,10 @@
 "use client";
 import { Button } from "antd";
-const Dashboard = () => {
+const Nutrition = () => {
   return (
     <div className="App">
-      <Button type="primary">Dashboard</Button>
+      <Button type="primary">Nutrition</Button>
     </div>
   );
 };
-export default Dashboard;
+export default Nutrition;
