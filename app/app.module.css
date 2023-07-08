@@ -1,0 +1,4 @@
+.removeHoverHighlight:hover {
+  background: none !important;
+  color: white !important;
+}
