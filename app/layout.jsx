@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, Button, Dropdown, Layout, Menu, theme } from "antd";
+import { Avatar, Button, Drawer, Dropdown, Grid, Layout, theme } from "antd";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Sider from "antd/es/layout/Sider";
@@ -14,11 +14,14 @@ import {
   MoreOutlined,
   LeftOutlined,
   RightOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 import { useRouter, usePathname } from "next/navigation";
 import Providers from "./providers";
 import token from "./token";
 import styles from "./app.module.css";
+import Menu from "./LayoutMenu";
+import LayoutMenu from "./LayoutMenu";
 
 const getItem = (label, key, icon, children) => {
   return {
@@ -42,7 +45,7 @@ const items = [
   ]),
   getItem("Logs", "logs", <ReconciliationOutlined />),
 ];
-
+const { useBreakpoint } = Grid;
 const pfp =
   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
@@ -52,8 +55,12 @@ export default function RootLayout({ children }) {
   const [pageTitle, setPageTitle] = useState("");
   const route = ({ keyPath }) => {
     router.push(`/${keyPath.reverse().join("/")}`);
+    setDrawerIsOpen(false);
   };
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const { xs: isMobile } = useBreakpoint();
+
   useEffect(() => {
     const result = pathname
       .split("/")
@@ -63,85 +70,57 @@ export default function RootLayout({ children }) {
     setPageTitle(finalResult);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!isMobile) {
+      setDrawerIsOpen(false);
+    }
+  }, [isMobile]);
+
   return (
     <html lang="en">
       <head>
-        <title>MyGymmy</title>
+        <title>Gymmy</title>
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff"></meta>
       </head>
       <body className={inter.className}>
         <Providers>
           <Layout style={{ minHeight: "100vh" }}>
-            <Sider
-              style={{
-                background: token.colorBgBase,
+            <Drawer
+              placement={"left"}
+              closable={true}
+              open={drawerIsOpen}
+              width="100%"
+              onClose={() => {
+                setDrawerIsOpen(false);
               }}
-              collapsible
-              collapsed={collapsed}
-              trigger={null}
             >
-              <div
+              <LayoutMenu
+                collapsed={collapsed}
+                route={route}
+                items={items}
+                setCollapsed={setCollapsed}
+                isMobile={isMobile}
+              ></LayoutMenu>
+            </Drawer>
+            {!isMobile && (
+              <Sider
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
+                  background: token.colorBgBase,
                 }}
+                collapsible
+                collapsed={collapsed}
+                trigger={null}
               >
-                <Menu
-                  defaultSelectedKeys={["1"]}
-                  mode="inline"
+                <LayoutMenu
+                  collapsed={collapsed}
+                  route={route}
                   items={items}
-                  onClick={route}
-                  style={{ borderInlineEnd: "0px" }}
-                />
-                <Button
-                  type="text"
-                  style={{
-                    display: "flex",
-                    alignItems: "stretch",
-                    flexDirection: "row",
-                    justifyContent: "stretch",
-                    flex: "1 1 auto",
-                    padding: "15px 22px",
-                  }}
-                  className={styles.removeHoverHighlight}
-                  onClick={() => setCollapsed(!collapsed)}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: collapsed ? "start" : "end",
-                      flexDirection: "row",
-                      flex: "1 1 auto",
-                    }}
-                  >
-                    {collapsed ? (
-                      <RightOutlined
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flexDirection: "row",
-                          flex: "1 1 auto",
-                        }}
-                      />
-                    ) : (
-                      <LeftOutlined
-                        style={{
-                          display: "flex",
-                          justifyContent: "end",
-                          alignItems: "center",
-                          flexDirection: "row",
-                          flex: "1 1 auto",
-                        }}
-                      />
-                    )}
-                  </div>
-                </Button>
-              </div>
-            </Sider>
+                  setCollapsed={setCollapsed}
+                  isMobile={isMobile}
+                ></LayoutMenu>
+              </Sider>
+            )}
             <Layout>
               <Header
                 style={{
@@ -155,9 +134,40 @@ export default function RootLayout({ children }) {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   background: token.greenBase,
+                  padding: "15px",
                 }}
               >
-                <h1>{pageTitle}</h1>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  {isMobile && (
+                    <Button
+                      type="text"
+                      shape="circle"
+                      onClick={() => {
+                        setDrawerIsOpen(true);
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexDirection: "row",
+                        }}
+                      >
+                        <MenuOutlined />
+                      </div>
+                    </Button>
+                  )}
+
+                  <h1>{pageTitle}</h1>
+                </div>
 
                 <div
                   style={{
@@ -197,7 +207,7 @@ export default function RootLayout({ children }) {
               <Footer
                 style={{ textAlign: "center", background: token.greenBase }}
               >
-                JIM ©2023 Created by Christian and Kevin
+                Gymmy ©2023 Created by Christian and Kevin
               </Footer>
             </Layout>
           </Layout>
