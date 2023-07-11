@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, Button, Drawer, Dropdown, Grid, Layout, theme } from "antd";
+import { Avatar, Button, Drawer, Dropdown, Grid, Layout } from "antd";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Sider from "antd/es/layout/Sider";
@@ -12,15 +12,11 @@ import {
   LineChartOutlined,
   ReconciliationOutlined,
   MoreOutlined,
-  LeftOutlined,
-  RightOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
 import { useRouter, usePathname } from "next/navigation";
 import Providers from "./providers";
 import token from "./token";
-import styles from "./app.module.css";
-import Menu from "./LayoutMenu";
 import LayoutMenu from "./LayoutMenu";
 
 const getItem = (label, key, icon, children) => {
@@ -84,7 +80,7 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#ffffff"></meta>
       </head>
       <body className={inter.className}>
-        <Providers>
+        <Providers router={router}>
           <Layout style={{ minHeight: "100vh" }}>
             <Drawer
               placement={"left"}
