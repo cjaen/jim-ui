@@ -2,11 +2,13 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import token from "./token";
 import { ConfigProvider } from "antd";
+import { useRouter } from "next/navigation";
 
-export default function Providers({ children, router }) {
+export default function Providers({ children }) {
   const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN;
   const clientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
   const redirectUri = process.env.NEXT_PUBLIC_AUTH0_CALLBACK_URL;
+  const router = useRouter();
 
   const onRedirectCallback = (appState) => {
     router.push(appState?.returnTo || window.location.pathname);
