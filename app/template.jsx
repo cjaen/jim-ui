@@ -2,7 +2,16 @@
 
 import "./globals.css";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Avatar, Button, Drawer, Dropdown, Grid, Layout, Spin } from "antd";
+import {
+  Avatar,
+  Button,
+  Drawer,
+  Dropdown,
+  Grid,
+  Image,
+  Layout,
+  Spin,
+} from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import LayoutMenu from "./LayoutMenu";
@@ -13,19 +22,22 @@ import {
   ExperimentOutlined,
   LineChartOutlined,
   LoadingOutlined,
+  LogoutOutlined,
   MenuOutlined,
   MoreOutlined,
   ReconciliationOutlined,
+  SettingOutlined,
   TeamOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import token from "./token";
 
-const getItem = (label, key, icon, children) => {
+const getItem = (label, key, icon, children, onClick) => {
   return {
     key,
     icon,
     children,
-    label,
+    label: <a onClick={onClick}>{label}</a>,
   };
 };
 
@@ -42,17 +54,12 @@ const menuItems = [
   getItem("Social", "social", <TeamOutlined />),
 ];
 
-const pfpItems = [
-  getItem("Profile", "profile", <ReconciliationOutlined />),
-  getItem("Settings", "settings", <AppstoreOutlined />),
-  getItem("Sign Out", "signOut", <TeamOutlined />),
-];
-
 const { useBreakpoint } = Grid;
 const spinIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
 
 export default function RootTemplate({ children }) {
-  const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading, user, logout } =
+    useAuth0();
   const router = useRouter();
   const pathname = usePathname();
   const [pageTitle, setPageTitle] = useState("");
@@ -63,6 +70,13 @@ export default function RootTemplate({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const { xs: isMobile } = useBreakpoint();
+  const pfpItems = [
+    getItem("Profile", "profile", <UserOutlined />),
+    getItem("Settings", "settings", <SettingOutlined />),
+    getItem("Sign Out", "signOut", <LogoutOutlined />, null, () => {
+      logout();
+    }),
+  ];
 
   useEffect(() => {
     const result = pathname
@@ -90,13 +104,12 @@ export default function RootTemplate({ children }) {
 
     if (!isLoading && !isAuthenticated) {
       handleLogin();
-    } else if (!isLoading && isAuthenticated) {
+    } else if (!isLoading && isAuthenticated && pathname == "/") {
       router.push("/dashboard");
-      console.log(user);
     }
-  }, [isAuthenticated, isLoading, loginWithRedirect, user, router]);
+  }, [isAuthenticated, isLoading, loginWithRedirect, user, router, pathname]);
 
-  return !(isAuthenticated && !isLoading) ? (
+  return isAuthenticated && !isLoading ? (
     <Layout style={{ minHeight: "100vh" }}>
       <Drawer
         placement={"left"}
@@ -201,7 +214,16 @@ export default function RootTemplate({ children }) {
             </Button>
             <Dropdown menu={{ items: pfpItems }} placement="bottomRight">
               {user && user.picture ? (
-                <Avatar src={<img src={user.picture} alt="avatar" />} />
+                <Avatar
+                  src={
+                    <Image
+                      referrerPolicy="no-referrer"
+                      src={user.picture}
+                      alt="avatar"
+                      preview={false}
+                    />
+                  }
+                />
               ) : (
                 <Avatar
                   style={{
