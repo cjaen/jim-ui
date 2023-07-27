@@ -10,6 +10,8 @@ export default function LayoutMenu({
   route,
   setCollapsed,
   isMobile,
+  selectedKeys,
+  setSelectedKeys,
 }) {
   return (
     <div
@@ -20,11 +22,14 @@ export default function LayoutMenu({
       }}
     >
       <Menu
-        defaultSelectedKeys={["1"]}
         mode="inline"
         items={items}
         onClick={route}
         style={{ borderInlineEnd: "0px" }}
+        onSelect={({ selectedKeys }) => {
+          setSelectedKeys(selectedKeys);
+        }}
+        selectedKeys={selectedKeys}
       />
       {!isMobile && (
         <Button

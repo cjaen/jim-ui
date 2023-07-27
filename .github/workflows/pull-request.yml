@@ -14,5 +14,11 @@ jobs:
         uses: actions/checkout@main
       - name: Install Dependencies
         run: npm install
+      - name: Write Environment File
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: .env.local
+          contents: ${{ secrets.ENV_LOCAL }}
+          write-mode: overwrite
       - name: Test a Build
         run: npm run build
