@@ -3,7 +3,6 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Button, Menu } from "antd";
 import styles from "./app.module.css";
-import { useState } from "react";
 
 export default function LayoutMenu({
   items,

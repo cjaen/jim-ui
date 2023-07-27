@@ -1,32 +1,16 @@
 "use client";
-import { Auth0Provider } from "@auth0/auth0-react";
 import token from "./token";
 import { ConfigProvider } from "antd";
-import { useRouter } from "next/navigation";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { useEffect, useState } from "react";
 
-export default function Providers({ children }) {
-  const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN;
-  const clientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
-  const redirectUri = process.env.NEXT_PUBLIC_AUTH0_CALLBACK_URL;
-  const router = useRouter();
-
-  const onRedirectCallback = (appState) => {
-    router.push(appState?.returnTo || window.location.pathname);
-  };
-
-  if (!(domain && clientId && redirectUri)) {
-    return null;
-  }
-
+export default function Providers({ children, userCallback }) {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    userCallback(user);
+  }, [user, userCallback]);
   return (
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      authorizationParams={{
-        redirect_uri: redirectUri,
-      }}
-      onRedirectCallback={onRedirectCallback}
-    >
+    <UserProvider>
       <ConfigProvider
         theme={{
           hashed: false,
@@ -35,6 +19,6 @@ export default function Providers({ children }) {
       >
         {children}
       </ConfigProvider>
-    </Auth0Provider>
+    </UserProvider>
   );
 }

@@ -3,7 +3,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Providers from "./providers";
-import { useAuth0 } from "@auth0/auth0-react";
 import {
   Avatar,
   Button,
@@ -15,7 +14,7 @@ import {
   Spin,
 } from "antd";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import LayoutMenu from "./LayoutMenu";
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer, Header } from "antd/es/layout/layout";
@@ -33,7 +32,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import token from "./token";
-import useAuth from "./useAuth";
+import { cookies } from "next/dist/client/components/headers";
 
 const getItem = (label, key, icon, children, onClick) => {
   return {
@@ -73,19 +72,23 @@ export default function RootLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState([]);
-  const { auth } = useAuth();
+  const [user, setUser] = useState(null);
+  const userCallback = useCallback((user) => {
+    setUser(user);
+  }, []);
+
   const { xs: isMobile } = useBreakpoint();
   const pfpItems = [
     getItem("Profile", "profile", <UserOutlined />),
     getItem("Settings", "settings", <SettingOutlined />),
     getItem("Sign Out", "signOut", <LogoutOutlined />, null, () => {
-      logout();
+      //logout();
     }),
   ];
 
   useEffect(() => {
-    console.log(auth);
-  }, [auth]);
+    console.log(user);
+  }, [user]);
 
   useEffect(() => {
     const result = pathname
@@ -102,32 +105,16 @@ export default function RootLayout({ children }) {
     }
   }, [isMobile]);
 
-  useEffect(() => {
-    const handleLogin = async () => {
-      await auth.loginWithRedirect({
-        appState: {
-          returnTo: "/dashboard",
-        },
-      });
-    };
-
-    if (!auth.isLoading && !auth.isAuthenticated) {
-      handleLogin();
-    } else if (!auth.isLoading && auth.isAuthenticated && pathname == "/") {
-      router.push("/dashboard");
-    }
-  }, [auth, router, pathname]);
-
   return (
-    <Providers>
-      <html lang="en">
-        <head>
-          <title>Gymmy</title>
-          <meta name="msapplication-TileColor" content="#da532c" />
-          <meta name="theme-color" content="#ffffff"></meta>
-        </head>
+    <html lang="en">
+      <head>
+        <title>Gymmy</title>
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#ffffff"></meta>
+      </head>
+      <Providers userCallback={userCallback}>
         <body className={inter.className}>
-          {auth.isAuthenticated && !auth.isLoading ? (
+          {true ? (
             <Layout style={{ minHeight: "100vh" }}>
               <Drawer
                 placement={"left"}
@@ -239,7 +226,7 @@ export default function RootLayout({ children }) {
                       menu={{ items: pfpItems }}
                       placement="bottomRight"
                     >
-                      {auth.user && auth.user.picture ? (
+                      {false ? (
                         <Avatar
                           src={
                             <Image
@@ -257,7 +244,7 @@ export default function RootLayout({ children }) {
                             color: "#f56a00",
                           }}
                         >
-                          {auth.user?.given_name.substring(0, 1)}
+                          {"KL"}
                         </Avatar>
                       )}
                     </Dropdown>
@@ -295,7 +282,7 @@ export default function RootLayout({ children }) {
             </Layout>
           )}
         </body>
-      </html>
-    </Providers>
+      </Providers>
+    </html>
   );
 }
