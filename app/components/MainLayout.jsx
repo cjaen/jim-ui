@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import LayoutMenu from "../LayoutMenu";
+
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import {
@@ -30,6 +30,8 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import styled from "styled-components";
+import LayoutMenu from "./LayoutMenu";
 
 const { useToken } = theme;
 
@@ -43,7 +45,6 @@ const getItem = (label, key, icon, children, href) => {
 };
 
 const { useBreakpoint } = Grid;
-const spinIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
 
 const menuItems = [
   getItem("Dashboard", "dashboard", <AppstoreOutlined />),
@@ -100,7 +101,7 @@ const MainLayout = ({ children }) => {
     }
   }, [isMobile]);
   return !isLoading && user ? (
-    <Layout style={{ minHeight: "100vh" }}>
+    <StyledMainLayout>
       <Drawer
         placement={"left"}
         closable={true}
@@ -121,13 +122,11 @@ const MainLayout = ({ children }) => {
         ></LayoutMenu>
       </Drawer>
       {!isMobile && (
-        <Sider
-          style={{
-            background: token.colorBgBase,
-          }}
+        <StyledSider
           collapsible
           collapsed={collapsed}
           trigger={null}
+          background={token.colorBgBase}
         >
           <LayoutMenu
             collapsed={collapsed}
@@ -138,33 +137,11 @@ const MainLayout = ({ children }) => {
             selectedKeys={selectedKeys}
             setSelectedKeys={setSelectedKeys}
           ></LayoutMenu>
-        </Sider>
+        </StyledSider>
       )}
       <Layout>
-        <Header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 100,
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            backgroundColor: "white",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            background: token.greenBase,
-            padding: "15px",
-          }}
-          className="mat-elevation-z3"
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
+        <StyledHeader className="mat-elevation-z3" background={token.greenBase}>
+          <StyledHeaderContainer>
             {isMobile && (
               <Button
                 type="text"
@@ -173,39 +150,20 @@ const MainLayout = ({ children }) => {
                   setDrawerIsOpen(true);
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "row",
-                  }}
-                >
+                <StyledMenuIconContainer>
                   <MenuOutlined />
-                </div>
+                </StyledMenuIconContainer>
               </Button>
             )}
 
             <h1>{pageTitle}</h1>
-          </div>
+          </StyledHeaderContainer>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
+          <StyledIconsContainer>
             <Button type="text" shape="circle">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-              >
+              <StyledMoreIconContainer>
                 <MoreOutlined />
-              </div>
+              </StyledMoreIconContainer>
             </Button>
             <Dropdown menu={{ items: pfpItems }} placement="bottomRight">
               {!user.picture ? (
@@ -220,12 +178,7 @@ const MainLayout = ({ children }) => {
                   }
                 />
               ) : (
-                <Avatar
-                  style={{
-                    backgroundColor: "#fde3cf",
-                    color: "#f56a00",
-                  }}
-                >
+                <StyledAvatar>
                   {user.name
                     .split(" ")
                     .map((name) => {
@@ -233,40 +186,93 @@ const MainLayout = ({ children }) => {
                     })
                     .join("")
                     .toUpperCase()}
-                </Avatar>
+                </StyledAvatar>
               )}
             </Dropdown>
-          </div>
-        </Header>
-        <Content
-          style={{
-            top: "50px",
-            backgroundColor: "#efefef",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {children}
-        </Content>
+          </StyledIconsContainer>
+        </StyledHeader>
+        <StyledContent>{children}</StyledContent>
 
-        <Footer style={{ textAlign: "center", background: token.greenBase }}>
+        <StyledFooter background={token.greenBase}>
           Gymmy ©2023 Created by Christian and Kevin
-        </Footer>
+        </StyledFooter>
       </Layout>
-    </Layout>
+    </StyledMainLayout>
   ) : (
-    <Layout
-      style={{
-        minHeight: "100vh",
-        background: token.offWhite,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Spin indicator={spinIcon}> </Spin>
+    <Layout className="spin-container">
+      <Spin indicator={<LoadingOutlined spin className="loading-outlined" />} />
     </Layout>
   );
 };
+
+const StyledMainLayout = styled(Layout)`
+  min-height: 100vh;
+`;
+
+const StyledSider = styled(Sider)`
+  background: ${(props) => {
+    return props.background;
+  }} !important;
+`;
+
+const StyledHeader = styled(Header)`
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  background: ${(props) => {
+    return props.background;
+  }} !important;
+  padding: 15px;
+`;
+
+const StyledHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+`;
+
+const StyledMenuIconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+`;
+
+const StyledIconsContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const StyledMoreIconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  background-color: #fde3cf;
+  color: #f56a00;
+`;
+
+const StyledContent = styled(Content)`
+  top: 50px;
+  background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledFooter = styled(Footer)`
+  text-align: "center";
+  background: ${(props) => {
+    return props.background;
+  }} !important;
+`;
 
 export default MainLayout;

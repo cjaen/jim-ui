@@ -1,3 +1,5 @@
-export default function RootTemplate({ children }) {
+const RootTemplate = ({ children }) => {
   return children;
-}
+};
+
+export default RootTemplate;

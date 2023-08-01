@@ -1,5 +1,7 @@
 "use client";
+
 import { Button } from "antd";
+
 const Readiness = () => {
   return (
     <div className="App">
@@ -7,4 +9,5 @@ const Readiness = () => {
     </div>
   );
 };
+
 export default Readiness;

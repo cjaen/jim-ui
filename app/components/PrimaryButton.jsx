@@ -1,20 +1,27 @@
 "use client";
 
 import { Button, theme } from "antd";
+import styled from "styled-components";
 
 const { useToken } = theme;
 
-const PrimaryButton = ({ label, style }) => {
+const PrimaryButton = ({ label }) => {
   const { token } = useToken();
   return (
-    <Button
+    <StyledButton
       type="primary"
-      style={{ backgroundColor: token.purple, ...style }}
       className="mat-elevation-z3"
+      background={token.purple}
     >
       {label}
-    </Button>
+    </StyledButton>
   );
 };
+
+const StyledButton = styled(Button)`
+  background-color: ${(props) => {
+    return props.background;
+  }} !important;
+`;
 
 export default PrimaryButton;

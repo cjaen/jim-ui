@@ -7,7 +7,7 @@ import MainLayout from "./components/MainLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }) {
+const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <head>
@@ -22,4 +22,6 @@ export default function RootLayout({ children }) {
       </Providers>
     </html>
   );
-}
+};
+
+export default RootLayout;

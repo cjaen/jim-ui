@@ -3,7 +3,7 @@ import token from "./token";
 import { ConfigProvider } from "antd";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 
-export default function Providers({ children }) {
+const Providers = ({ children }) => {
   return (
     <UserProvider>
       <ConfigProvider
@@ -16,4 +16,6 @@ export default function Providers({ children }) {
       </ConfigProvider>
     </UserProvider>
   );
-}
+};
+
+export default Providers;

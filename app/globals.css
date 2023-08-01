@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+.spin-container {
+  min-height: 100vh !important;
+  background: #efefef !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.loading-outlined {
+  font-size: 60px !important;
+}
+
+.ant-menu .ant-menu-submenu .ant-menu-sub {
+  margin-left: 4px;
+  cursor: initial;
+  transition: background 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
 .mat-elevation-z0 {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
     0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgb(0 89 244 / 15%);

@@ -1,22 +1,27 @@
 "use client";
 
 import PrimaryButton from "../components/PrimaryButton";
+import styled from "styled-components";
 
 const Logs = () => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignContent: "stretch",
-        padding: "10px",
-        flexGrow: "1",
-      }}
-    >
-      <div style={{ flexGrow: 1 }}></div>
+    <StyledMainContainer>
+      <StyledContentContainer></StyledContentContainer>
       <PrimaryButton label="Start Workout"></PrimaryButton>
-    </div>
+    </StyledMainContainer>
   );
 };
+
+const StyledMainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  padding: 10px;
+  flex-grow: 1;
+`;
+
+const StyledContentContainer = styled.div`
+  flex-grow: 1;
+`;
 
 export default Logs;
