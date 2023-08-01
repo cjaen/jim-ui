@@ -8,4 +8,5 @@ const token = {
   offWhite: "#efefef",
   purple: "#5e17eb",
 };
+
 export default token;
