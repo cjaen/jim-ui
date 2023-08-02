@@ -191,11 +191,9 @@ const MainLayout = ({ children }) => {
             </Dropdown>
           </StyledIconsContainer>
         </StyledHeader>
-        <StyledContent>{children}</StyledContent>
-
-        <StyledFooter background={token.greenBase}>
-          Gymmy ©2023 Created by Christian and Kevin
-        </StyledFooter>
+        <StyledContent>
+          <StyledMainContainer>{children}</StyledMainContainer>
+        </StyledContent>
       </Layout>
     </StyledMainLayout>
   ) : (
@@ -207,6 +205,7 @@ const MainLayout = ({ children }) => {
 
 const StyledMainLayout = styled(Layout)`
   min-height: 100vh;
+  overflow: hidden;
 `;
 
 const StyledSider = styled(Sider)`
@@ -268,11 +267,16 @@ const StyledContent = styled(Content)`
   flex-direction: column;
 `;
 
-const StyledFooter = styled(Footer)`
-  text-align: "center";
-  background: ${(props) => {
-    return props.background;
-  }} !important;
+const StyledMainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  flex-grow: 1;
+  padding: 30px 10px;
+
+  @media only screen and (min-width: 576px) {
+    padding: 30px 20%;
+  }
 `;
 
 export default MainLayout;

@@ -5,13 +5,14 @@ import styled from "styled-components";
 
 const { useToken } = theme;
 
-const PrimaryButton = ({ label }) => {
+const PrimaryButton = ({ label, onClick }) => {
   const { token } = useToken();
   return (
     <StyledButton
       type="primary"
       className="mat-elevation-z3"
       background={token.purple}
+      onClick={onClick}
     >
       {label}
     </StyledButton>

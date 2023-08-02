@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.ant-card .ant-card-head {
+  border-bottom: 1px solid #efefef;
+}
+
 .spin-container {
   min-height: 100vh !important;
   background: #efefef !important;
