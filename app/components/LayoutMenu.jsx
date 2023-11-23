@@ -47,7 +47,7 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledMenu = styled(Menu)`
-  border-inline-end: 0px;
+  border-inline-end: 0px !important;
   overflow-y: auto;
   overflow-x: hidden;
 `;
