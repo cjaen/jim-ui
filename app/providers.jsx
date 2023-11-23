@@ -1,15 +1,21 @@
 "use client";
 import token from "./token";
 import { ConfigProvider } from "antd";
-export default function Providers({ children }) {
+import { UserProvider } from "@auth0/nextjs-auth0/client";
+
+const Providers = ({ children }) => {
   return (
-    <ConfigProvider
-      theme={{
-        hashed: false,
-        token: token,
-      }}
-    >
-      {children}
-    </ConfigProvider>
+    <UserProvider>
+      <ConfigProvider
+        theme={{
+          hashed: false,
+          token: token,
+        }}
+      >
+        {children}
+      </ConfigProvider>
+    </UserProvider>
   );
-}
+};
+
+export default Providers;

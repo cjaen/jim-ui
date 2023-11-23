@@ -5,5 +5,9 @@ const token = {
   colorBgBase: "#01386C",
   colorTextBase: "#ffffff",
   greenBase: "#13b38b",
+  offWhite: "#efefef",
+  purple: "#5e17eb",
+  yellow: "#fef878",
 };
+
 export default token;

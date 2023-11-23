@@ -1,10 +1,54 @@
 "use client";
-import { Button } from "antd";
+
+import { Card, Divider } from "antd";
+import PrimaryButton from "../components/PrimaryButton";
+import styled from "styled-components";
+import { useRouter } from "next/navigation";
+
+const workouts = ["Chest Day", "Back Day", "Leg Day", "Shoulder Day"];
+
 const Logs = () => {
+  const router = useRouter();
+
   return (
-    <div className="App">
-      <Button type="primary">Logs</Button>
-    </div>
+    <>
+      <StyledContentContainer>
+        {workouts.map((workout, index) => (
+          <StyledCard
+            bordered={false}
+            hoverable
+            key={index}
+            title={workout}
+            headStyle={{ color: "#232323" }}
+          >
+            <p>Card content</p>
+            <p>Card content</p>
+            <p>Card content</p>
+          </StyledCard>
+        ))}
+      </StyledContentContainer>
+      <PrimaryButton
+        label="Start Workout"
+        onClick={() => {
+          router.push("/logs/somethingRandom");
+        }}
+        elevate
+      ></PrimaryButton>
+    </>
   );
 };
+
+const StyledContentContainer = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  overflow: auto;
+`;
+
+const StyledCard = styled(Card)`
+  background: white;
+  color: #232323;
+`;
+
 export default Logs;
