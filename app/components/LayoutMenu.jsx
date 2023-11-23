@@ -48,6 +48,8 @@ const StyledMainContainer = styled.div`
 
 const StyledMenu = styled(Menu)`
   border-inline-end: 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const StyledButton = styled(Button)`

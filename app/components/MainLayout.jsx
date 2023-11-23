@@ -41,6 +41,7 @@ const getItem = (label, key, icon, children, href) => {
     icon,
     children,
     label: <a href={href}>{label}</a>,
+    title: "",
   };
 };
 
@@ -139,7 +140,7 @@ const MainLayout = ({ children }) => {
           ></LayoutMenu>
         </StyledSider>
       )}
-      <Layout>
+      <StyledSubLayout>
         <StyledHeader className="mat-elevation-z3" background={token.greenBase}>
           <StyledHeaderContainer>
             {isMobile && (
@@ -194,7 +195,7 @@ const MainLayout = ({ children }) => {
         <StyledContent>
           <StyledMainContainer>{children}</StyledMainContainer>
         </StyledContent>
-      </Layout>
+      </StyledSubLayout>
     </StyledMainLayout>
   ) : (
     <Layout className="spin-container">
@@ -204,7 +205,7 @@ const MainLayout = ({ children }) => {
 };
 
 const StyledMainLayout = styled(Layout)`
-  min-height: 100vh;
+  height: 100%;
   overflow: hidden;
 `;
 
@@ -215,10 +216,6 @@ const StyledSider = styled(Sider)`
 `;
 
 const StyledHeader = styled(Header)`
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -227,6 +224,7 @@ const StyledHeader = styled(Header)`
     return props.background;
   }} !important;
   padding: 15px;
+  z-index: 1;
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -261,22 +259,31 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const StyledContent = styled(Content)`
-  top: 50px;
   background-color: #efefef;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-content: stretch;
-  flex-grow: 1;
+  flex: 1;
   padding: 30px 10px;
+  overflow: hidden;
+  gap: 10px;
 
   @media only screen and (min-width: 576px) {
     padding: 30px 20%;
   }
+`;
+
+const StyledSubLayout = styled(Layout)`
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 
 export default MainLayout;
