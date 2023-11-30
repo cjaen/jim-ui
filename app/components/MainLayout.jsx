@@ -42,6 +42,7 @@ const getItem = (label, key, icon, children, href) => {
     children,
     label: <a href={href}>{label}</a>,
     title: "",
+    danger: key === "signOut",
   };
 };
 
@@ -111,6 +112,7 @@ const MainLayout = ({ children }) => {
         onClose={() => {
           setDrawerIsOpen(false);
         }}
+        style={{ background: token.blue }}
       >
         <LayoutMenu
           collapsed={collapsed}
@@ -127,7 +129,7 @@ const MainLayout = ({ children }) => {
           collapsible
           collapsed={collapsed}
           trigger={null}
-          background={token.colorBgBase}
+          $background={token.blue}
         >
           <LayoutMenu
             collapsed={collapsed}
@@ -141,7 +143,10 @@ const MainLayout = ({ children }) => {
         </StyledSider>
       )}
       <StyledSubLayout>
-        <StyledHeader className="mat-elevation-z3" background={token.greenBase}>
+        <StyledHeader
+          className="mat-elevation-z3"
+          $background={token.greenBase}
+        >
           <StyledHeaderContainer>
             {isMobile && (
               <Button
@@ -211,7 +216,7 @@ const StyledMainLayout = styled(Layout)`
 
 const StyledSider = styled(Sider)`
   background: ${(props) => {
-    return props.background;
+    return props.$background;
   }} !important;
 `;
 
@@ -221,10 +226,11 @@ const StyledHeader = styled(Header)`
   flex-direction: row;
   justify-content: space-between;
   background: ${(props) => {
-    return props.background;
+    return props.$background;
   }} !important;
   padding: 15px;
   z-index: 1;
+  color: white;
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -239,6 +245,7 @@ const StyledMenuIconContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  color: white;
 `;
 
 const StyledIconsContainer = styled.div`
@@ -251,6 +258,7 @@ const StyledMoreIconContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  color: white;
 `;
 
 const StyledAvatar = styled(Avatar)`
