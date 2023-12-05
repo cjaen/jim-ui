@@ -1,7 +1,8 @@
 "use client";
 
-import PrimaryButton from "@/app/components/PrimaryButton";
-import { Button, Card, theme } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import PrimaryButton from "../../components/PrimaryButton";
+import { Button, Card, Input, List, theme } from "antd";
 import Search from "antd/es/input/Search";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -10,13 +11,33 @@ const Workout = () => {
   const { useToken } = theme;
   const { token } = useToken();
   const [page, setPage] = useState("exerciseCategories");
+  const [categories, setCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
 
-  const onSearch = (value, _e, info) => console.log(info.source, value);
+  const onChange = (event) => {
+    const value = event.target.value.trim().toLowerCase();
+    let exactHit = false;
+
+    const filteredCategories = categories.filter((category) => {
+      const name = category.name.toLowerCase();
+      if (value === name) exactHit = true;
+
+      if (!value) return true;
+
+      return name.includes(value);
+    });
+
+    if (!exactHit && value !== "")
+      filteredCategories.push({ name: `Add ${value}`, new: true });
+
+    setFilteredCategories(filteredCategories);
+  };
 
   useEffect(() => {
     (async () => {
       const categories = await (await fetch("/api/exerciseCategories")).json();
-      console.log(categories);
+      setCategories(categories);
+      setFilteredCategories(categories);
     })();
   }, []);
 
@@ -64,14 +85,32 @@ const Workout = () => {
             headStyle={{ color: "#232323" }}
             bordered={false}
             className="mat-elevation-z3"
+            bodyStyle={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              flex: 1,
+              overflow: "hidden",
+            }}
           >
-            <Search
-              placeholder="input search text"
+            <Input
+              placeholder="Exercise category..."
               allowClear
-              onSearch={onSearch}
+              onChange={onChange}
               style={{ background: "white" }}
             />
-            <ScrollableContainer></ScrollableContainer>
+            <ScrollableContainer>
+              <List
+                dataSource={filteredCategories}
+                renderItem={(item) => {
+                  return (
+                    <StyledItem $new={item.new}>
+                      {item.new && <PlusOutlined />} {item.name}
+                    </StyledItem>
+                  );
+                }}
+              />
+            </ScrollableContainer>
           </ScrollableCard>
         </>
       );
@@ -79,7 +118,7 @@ const Workout = () => {
 };
 
 const ScrollableContainer = styled.div`
-  flex-grow: 1;
+  flex: 1;
   overflow: auto;
 `;
 
@@ -89,6 +128,7 @@ const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: hidden;
 `;
 
 const Sets = styled.div`
@@ -101,6 +141,14 @@ const Sets = styled.div`
 
 const ScrollableCard = styled(StyledCard)`
   flex: 1;
+`;
+
+const StyledItem = styled(List.Item)`
+  ${(props) => {
+    if (props.$new) {
+      return "color: #5e17eb !important;";
+    }
+  }}
 `;
 
 export default Workout;

@@ -189,6 +189,23 @@ body {
   background-color: #335f89 !important;
 }
 
-.ant-menu {
+.ant-menu,
+.ant-drawer-close {
   color: white !important;
+}
+
+.ant-menu-sub {
+  background-color: #01386c !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  -webkit-border-radius: 8px;
+  background-color: #13b38b;
 }

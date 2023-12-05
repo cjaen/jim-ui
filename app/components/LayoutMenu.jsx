@@ -65,6 +65,7 @@ const StyledButton = styled(Button)`
   justify-content: stretch;
   flex: 1 1 auto;
   padding: 15px 22px;
+  color: white;
 `;
 
 const StyledButtonContainer = styled.div`
