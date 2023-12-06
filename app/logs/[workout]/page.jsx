@@ -1,18 +1,22 @@
 "use client";
 
 import { PlusOutlined } from "@ant-design/icons";
-import PrimaryButton from "../../components/PrimaryButton";
-import { Button, Card, Input, List, theme } from "antd";
-import Search from "antd/es/input/Search";
+import { Card, Input, List, Skeleton, theme } from "antd";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import PrimaryButton from "../../components/PrimaryButton";
 
 const Workout = () => {
   const { useToken } = theme;
   const { token } = useToken();
-  const [page, setPage] = useState("exerciseCategories");
+  const [page, setPage] = useState("sets");
   const [categories, setCategories] = useState([]);
-  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState(
+    Array.from({ length: 8 }, () => {
+      return { width: `${Math.floor(Math.random() * 4) + 2}0%` };
+    })
+  );
+  const [loading, setLoading] = useState(true);
 
   const onChange = (event) => {
     const value = event.target.value.trim().toLowerCase();
@@ -33,11 +37,16 @@ const Workout = () => {
     setFilteredCategories(filteredCategories);
   };
 
+  const selectCategory = (category) => {
+    setPage("exercises");
+  };
+
   useEffect(() => {
     (async () => {
       const categories = await (await fetch("/api/exerciseCategories")).json();
       setCategories(categories);
       setFilteredCategories(categories);
+      setLoading(false);
     })();
   }, []);
 
@@ -104,8 +113,22 @@ const Workout = () => {
                 dataSource={filteredCategories}
                 renderItem={(item) => {
                   return (
-                    <StyledItem $new={item.new}>
-                      {item.new && <PlusOutlined />} {item.name}
+                    <StyledItem
+                      $new={item.new}
+                      onClick={() => selectCategory(item)}
+                    >
+                      {item._id || item.new ? (
+                        <span>
+                          {item.new && <PlusOutlined />} {item.name}
+                        </span>
+                      ) : (
+                        <Skeleton
+                          loading={loading}
+                          active
+                          paragraph={false}
+                          title={item}
+                        />
+                      )}
                     </StyledItem>
                   );
                 }}
@@ -149,6 +172,15 @@ const StyledItem = styled(List.Item)`
       return "color: #5e17eb !important;";
     }
   }}
+
+  cursor: pointer;
+  padding: 10px !important;
+  border-radius: 3px;
+
+  &:hover {
+    color: #5e17eb;
+    background: #f4f0fe;
+  }
 `;
 
 export default Workout;

@@ -89,13 +89,18 @@ const MainLayout = ({ children }) => {
   ];
 
   useEffect(() => {
-    const result = pathname
-      .split("/")
-      .slice(-1)[0]
-      .replace(/([A-Z])/g, " $1");
+    let result = pathname.split("/");
+
+    console.log(result);
+
+    result = result[1] === "logs" ? result[1] : result.slice(-1)[0];
+
+    result = result.replace(/([A-Z])/g, " $1");
+
     const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
     setPageTitle(finalResult);
-  }, [pathname]);
+    console.log(router.path);
+  }, [pathname, router]);
 
   useEffect(() => {
     if (!isMobile) {
