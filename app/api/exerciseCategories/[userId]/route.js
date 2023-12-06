@@ -1,5 +1,5 @@
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
-import clientPromise from "../../../lib/mongodb";
+import clientPromise from "../../../../lib/mongodb";
 import { NextResponse } from "next/server";
 
 const handle = async () => {
