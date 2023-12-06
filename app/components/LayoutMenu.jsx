@@ -1,9 +1,9 @@
 "use client";
 
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Menu } from "antd";
+import { Button, Menu, theme } from "antd";
 import styles from "../app.module.css";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 const LayoutMenu = ({
   items,
@@ -14,6 +14,9 @@ const LayoutMenu = ({
   selectedKeys,
   setSelectedKeys,
 }) => {
+  const { useToken } = theme;
+  const { token } = useToken();
+
   return (
     <StyledMainContainer>
       <StyledMenu
@@ -24,6 +27,7 @@ const LayoutMenu = ({
           setSelectedKeys(selectedKeys);
         }}
         selectedKeys={selectedKeys}
+        $background={token.blue}
       />
       {!isMobile && (
         <StyledButton
@@ -31,7 +35,7 @@ const LayoutMenu = ({
           className={styles.removeHoverHighlight}
           onClick={() => setCollapsed(!collapsed)}
         >
-          <StyledButtonContainer collapsed={collapsed}>
+          <StyledButtonContainer $collapsed={collapsed}>
             {collapsed ? <StyledRightOutlined /> : <StyledLeftOutlined />}
           </StyledButtonContainer>
         </StyledButton>
@@ -50,6 +54,8 @@ const StyledMenu = styled(Menu)`
   border-inline-end: 0px !important;
   overflow-y: auto;
   overflow-x: hidden;
+  background: ${(props) => props.$background};
+  color: white;
 `;
 
 const StyledButton = styled(Button)`
@@ -59,12 +65,13 @@ const StyledButton = styled(Button)`
   justify-content: stretch;
   flex: 1 1 auto;
   padding: 15px 22px;
+  color: white;
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: ${(props) => (props.collapsed ? "start" : "end")};
+  align-items: ${(props) => (props.$collapsed ? "start" : "end")};
   flex-direction: row;
   flex: 1 1 auto;
 `;

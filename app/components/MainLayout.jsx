@@ -42,6 +42,7 @@ const getItem = (label, key, icon, children, href) => {
     children,
     label: <a href={href}>{label}</a>,
     title: "",
+    danger: key === "signOut",
   };
 };
 
@@ -88,13 +89,18 @@ const MainLayout = ({ children }) => {
   ];
 
   useEffect(() => {
-    const result = pathname
-      .split("/")
-      .slice(-1)[0]
-      .replace(/([A-Z])/g, " $1");
+    let result = pathname.split("/");
+
+    console.log(result);
+
+    result = result[1] === "logs" ? result[1] : result.slice(-1)[0];
+
+    result = result.replace(/([A-Z])/g, " $1");
+
     const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
     setPageTitle(finalResult);
-  }, [pathname]);
+    console.log(router.path);
+  }, [pathname, router]);
 
   useEffect(() => {
     if (!isMobile) {
@@ -111,6 +117,7 @@ const MainLayout = ({ children }) => {
         onClose={() => {
           setDrawerIsOpen(false);
         }}
+        style={{ background: token.blue }}
       >
         <LayoutMenu
           collapsed={collapsed}
@@ -127,7 +134,7 @@ const MainLayout = ({ children }) => {
           collapsible
           collapsed={collapsed}
           trigger={null}
-          background={token.colorBgBase}
+          $background={token.blue}
         >
           <LayoutMenu
             collapsed={collapsed}
@@ -141,7 +148,10 @@ const MainLayout = ({ children }) => {
         </StyledSider>
       )}
       <StyledSubLayout>
-        <StyledHeader className="mat-elevation-z3" background={token.greenBase}>
+        <StyledHeader
+          className="mat-elevation-z3"
+          $background={token.greenBase}
+        >
           <StyledHeaderContainer>
             {isMobile && (
               <Button
@@ -211,7 +221,7 @@ const StyledMainLayout = styled(Layout)`
 
 const StyledSider = styled(Sider)`
   background: ${(props) => {
-    return props.background;
+    return props.$background;
   }} !important;
 `;
 
@@ -221,10 +231,11 @@ const StyledHeader = styled(Header)`
   flex-direction: row;
   justify-content: space-between;
   background: ${(props) => {
-    return props.background;
+    return props.$background;
   }} !important;
   padding: 15px;
   z-index: 1;
+  color: white;
 `;
 
 const StyledHeaderContainer = styled.div`
@@ -239,6 +250,7 @@ const StyledMenuIconContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  color: white;
 `;
 
 const StyledIconsContainer = styled.div`
@@ -251,6 +263,7 @@ const StyledMoreIconContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  color: white;
 `;
 
 const StyledAvatar = styled(Avatar)`
