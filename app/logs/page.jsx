@@ -10,6 +10,11 @@ const workouts = ["Chest Day", "Back Day", "Leg Day", "Shoulder Day"];
 const Logs = () => {
   const router = useRouter();
 
+  const startWorkout = async () => {
+    const response = await (await fetch("/api/logs/startWorkout")).json();
+    router.push(`/logs/${response.id}`);
+  };
+
   return (
     <>
       <StyledContentContainer>
@@ -29,9 +34,7 @@ const Logs = () => {
       </StyledContentContainer>
       <PrimaryButton
         label="Start Workout"
-        onClick={() => {
-          router.push("/logs/somethingRandom");
-        }}
+        onClick={startWorkout}
         elevate
       ></PrimaryButton>
     </>
