@@ -5,18 +5,26 @@ import { Card, Input, List, Skeleton, theme } from "antd";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import PrimaryButton from "../../components/PrimaryButton";
+import CardTitle from "../../components/CardTitle";
+import { useParams, useRouter } from "next/navigation";
 
 const Workout = () => {
   const { useToken } = theme;
+  const router = useRouter();
+  const params = useParams();
   const { token } = useToken();
   const [page, setPage] = useState("sets");
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState(
     Array.from({ length: 8 }, () => {
-      return { width: `${Math.floor(Math.random() * 4) + 2}0%` };
+      return {
+        width: `${Math.floor(Math.random() * 4) + 2}0%`,
+        skeleton: true,
+      };
     })
   );
   const [loading, setLoading] = useState(true);
+  const [sessionExercises, setSessionExercises] = useState([]);
 
   const onChange = (event) => {
     const value = event.target.value.trim().toLowerCase();
@@ -41,14 +49,26 @@ const Workout = () => {
     setPage("exercises");
   };
 
+  const endWorkout = async () => {
+    if (sessionExercises.length === 0) {
+      await fetch(`/api/logs/${params.workout}`, { method: "DELETE" });
+    } else {
+    }
+    router.push("/logs");
+  };
+
   useEffect(() => {
-    (async () => {
-      const categories = await (await fetch("/api/exerciseCategories")).json();
-      setCategories(categories);
-      setFilteredCategories(categories);
-      setLoading(false);
-    })();
-  }, []);
+    if (page === "exerciseCategories") {
+      (async () => {
+        const categories = await (
+          await fetch("/api/exerciseCategories")
+        ).json();
+        setCategories(categories);
+        setFilteredCategories(categories);
+        setLoading(false);
+      })();
+    }
+  }, [page]);
 
   switch (page) {
     case "sets":
@@ -56,7 +76,7 @@ const Workout = () => {
         <>
           <ScrollableContainer>
             <StyledCard
-              title="Bench Press"
+              title={<CardTitle disableBack title="Bench Press" />}
               headStyle={{ color: "#232323" }}
               bordered={false}
               className="mat-elevation-z3"
@@ -79,9 +99,7 @@ const Workout = () => {
           ></PrimaryButton>
           <PrimaryButton
             label="End Workout"
-            onClick={() => {
-              router.push("/logs/somethingRandom");
-            }}
+            onClick={endWorkout}
             elevate
           ></PrimaryButton>
         </>
@@ -90,7 +108,14 @@ const Workout = () => {
       return (
         <>
           <ScrollableCard
-            title="Exercise Categories"
+            title={
+              <CardTitle
+                title="Exercise Categories"
+                onBack={() => {
+                  setPage("sets");
+                }}
+              />
+            }
             headStyle={{ color: "#232323" }}
             bordered={false}
             className="mat-elevation-z3"
@@ -106,7 +131,8 @@ const Workout = () => {
               placeholder="Exercise category..."
               allowClear
               onChange={onChange}
-              style={{ background: "white" }}
+              style={!loading ? { background: "white" } : {}}
+              disabled={loading}
             />
             <ScrollableContainer>
               <List
@@ -115,7 +141,10 @@ const Workout = () => {
                   return (
                     <StyledItem
                       $new={item.new}
-                      onClick={() => selectCategory(item)}
+                      onClick={() => {
+                        if (!item.skeleton) selectCategory(item);
+                      }}
+                      $skeleton={item.skeleton}
                     >
                       {item._id || item.new ? (
                         <span>
@@ -169,18 +198,27 @@ const ScrollableCard = styled(StyledCard)`
 const StyledItem = styled(List.Item)`
   ${(props) => {
     if (props.$new) {
-      return "color: #5e17eb !important;";
+      return `
+        color: #5e17eb !important;
+      `;
     }
   }}
 
-  cursor: pointer;
   padding: 10px !important;
   border-radius: 3px;
 
-  &:hover {
-    color: #5e17eb;
-    background: #f4f0fe;
-  }
+  ${(props) => {
+    if (!props.$skeleton) {
+      return `
+        cursor: pointer;
+
+        &:hover {
+          color: #5e17eb;
+          background: #f4f0fe;
+        }
+      `;
+    }
+  }}
 `;
 
 export default Workout;
