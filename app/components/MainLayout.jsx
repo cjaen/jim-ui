@@ -12,7 +12,7 @@ import {
   theme,
 } from "antd";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Sider from "antd/es/layout/Sider";
 import { Content, Footer, Header } from "antd/es/layout/layout";
@@ -32,6 +32,7 @@ import {
 import { useUser } from "@auth0/nextjs-auth0/client";
 import styled from "styled-components";
 import LayoutMenu from "./LayoutMenu";
+import SessionContext from "../contexts/SessionContext";
 
 const { useToken } = theme;
 
@@ -75,6 +76,8 @@ const MainLayout = ({ children }) => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState([]);
 
+  const { setActiveLog, setSessionContextLoaded } = useContext(SessionContext);
+
   const { xs: isMobile } = useBreakpoint();
   const pfpItems = [
     getItem("Profile", "profile", <UserOutlined />),
@@ -87,6 +90,16 @@ const MainLayout = ({ children }) => {
       "/api/auth/logout"
     ),
   ];
+
+  useEffect(() => {
+    if (user) {
+      (async () => {
+        const activeLog = await (await fetch("/api/logs/activeLog")).json();
+        setActiveLog(activeLog);
+        setSessionContextLoaded(true);
+      })();
+    }
+  }, [user, setActiveLog, setSessionContextLoaded]);
 
   useEffect(() => {
     let result = pathname.split("/");

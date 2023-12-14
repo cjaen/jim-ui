@@ -7,20 +7,12 @@ const handle = async (req) => {
   const { user } = await getSession(req, res);
   const client = await clientPromise;
   const db = client.db("gymmy");
-  const startTime = new Date();
 
-  const workout = await db
+  const log = await db
     .collection("logs")
-    .insertOne({ userId: user.sub, startTime });
+    .findOne({ userId: user.sub, endTime: { $exists: false } });
 
-  return NextResponse.json(
-    {
-      _id: workout.insertedId,
-      userId: user.sub,
-      startTime,
-    },
-    res
-  );
+  return NextResponse.json(log, res);
 };
 
 export const GET = withApiAuthRequired(handle);

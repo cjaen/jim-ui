@@ -1,18 +1,38 @@
 "use client";
 
-import { Card, Divider } from "antd";
+import { Card } from "antd";
 import PrimaryButton from "../components/PrimaryButton";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
+import { CloseCircleOutlined } from "@ant-design/icons";
+import { useContext } from "react";
+import SessionContext from "../contexts/SessionContext";
 
 const workouts = ["Chest Day", "Back Day", "Leg Day", "Shoulder Day"];
 
 const Logs = () => {
   const router = useRouter();
 
+  const { activeLog, setActiveLog, sessionContextLoaded } =
+    useContext(SessionContext);
+
   const startWorkout = async () => {
-    const response = await (await fetch("/api/logs/startWorkout")).json();
-    router.push(`/logs/${response.id}`);
+    if (activeLog) {
+      router.push(`/logs/${activeLog._id}`);
+    } else {
+      const response = await (await fetch("/api/logs/startWorkout")).json();
+      router.push(`/logs/${response._id}`);
+      setActiveLog(response);
+    }
+  };
+
+  const endWorkout = async () => {
+    if (activeLog.exercises === undefined || activeLog.exercises.length === 0) {
+      await fetch(`/api/logs/${activeLog._id}`, { method: "DELETE" });
+    } else {
+    }
+    router.push("/logs");
+    setActiveLog(null);
   };
 
   return (
@@ -32,14 +52,34 @@ const Logs = () => {
           </StyledCard>
         ))}
       </StyledContentContainer>
-      <PrimaryButton
-        label="Start Workout"
-        onClick={startWorkout}
-        elevate
-      ></PrimaryButton>
+      <ButtonContainer>
+        <PrimaryButton
+          label={activeLog ? "Continue Workout" : "Start Workout"}
+          onClick={startWorkout}
+          elevate
+          flex="1"
+          loading={!sessionContextLoaded}
+        ></PrimaryButton>
+        {activeLog && (
+          <PrimaryButton
+            label={<CloseCircleOutlined style={{ fontSize: 25 }} />}
+            onClick={endWorkout}
+            elevate
+            flex="0 0 75px"
+            color="#ff4d4f"
+          ></PrimaryButton>
+        )}
+      </ButtonContainer>
     </>
   );
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
 
 const StyledContentContainer = styled.div`
   display: inline-flex;
