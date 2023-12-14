@@ -1,18 +1,24 @@
 "use client";
 
-import { PlusOutlined } from "@ant-design/icons";
-import { Card, Input, List, Skeleton, theme } from "antd";
-import { useEffect, useState } from "react";
+import { CloseCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Card, Grid, Input, List, Skeleton, theme } from "antd";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import PrimaryButton from "../../components/PrimaryButton";
 import CardTitle from "../../components/CardTitle";
 import { useParams, useRouter } from "next/navigation";
+import SessionContext from "../../contexts/SessionContext";
+
+const { useBreakpoint } = Grid;
 
 const Workout = () => {
   const { useToken } = theme;
   const router = useRouter();
   const params = useParams();
   const { token } = useToken();
+  const { xs: isMobile } = useBreakpoint();
+  const { activeLog, sessionContextLoaded, setActiveLog } =
+    useContext(SessionContext);
   const [page, setPage] = useState("sets");
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState(
@@ -51,11 +57,21 @@ const Workout = () => {
 
   const endWorkout = async () => {
     if (sessionExercises.length === 0) {
-      await fetch(`/api/logs/${params.workout}`, { method: "DELETE" });
+      await fetch(`/api/logs/${activeLog._id}`, { method: "DELETE" });
     } else {
     }
     router.push("/logs");
+    setActiveLog(null);
   };
+
+  useEffect(() => {
+    if (
+      sessionContextLoaded &&
+      (!activeLog || params.workout !== activeLog._id)
+    ) {
+      router.replace("/logs");
+    }
+  }, [params, activeLog, sessionContextLoaded, router]);
 
   useEffect(() => {
     if (page === "exerciseCategories") {
@@ -90,18 +106,25 @@ const Workout = () => {
               </Sets>
             </StyledCard>
           </ScrollableContainer>
-          <PrimaryButton
-            label="Add Exercise"
-            onClick={() => {
-              setPage("exerciseCategories");
-            }}
-            elevate
-          ></PrimaryButton>
-          <PrimaryButton
-            label="End Workout"
-            onClick={endWorkout}
-            elevate
-          ></PrimaryButton>
+          <ButtonContainer>
+            <PrimaryButton
+              label="Add Exercise"
+              onClick={() => {
+                setPage("exerciseCategories");
+              }}
+              elevate
+              flex="1"
+              loading={!sessionContextLoaded}
+            ></PrimaryButton>
+            <PrimaryButton
+              label={<CloseCircleOutlined style={{ fontSize: 25 }} />}
+              onClick={endWorkout}
+              elevate
+              flex="0 0 75px"
+              color="#ff4d4f"
+              loading={!sessionContextLoaded}
+            ></PrimaryButton>
+          </ButtonContainer>
         </>
       );
     case "exerciseCategories":
@@ -168,6 +191,13 @@ const Workout = () => {
       );
   }
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
 
 const ScrollableContainer = styled.div`
   flex: 1;
