@@ -8,8 +8,19 @@ import PrimaryButton from "../../components/PrimaryButton";
 import CardTitle from "../../components/CardTitle";
 import { useParams, useRouter } from "next/navigation";
 import SessionContext from "../../contexts/SessionContext";
+import SessionTimer from "../../components/SessionTimer";
 
 const { useBreakpoint } = Grid;
+
+const toTitleCase = (string) => {
+  return string
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .split(" ")
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(" ");
+};
 
 const Workout = () => {
   const { useToken } = theme;
@@ -30,7 +41,6 @@ const Workout = () => {
     })
   );
   const [loading, setLoading] = useState(true);
-  const [sessionExercises, setSessionExercises] = useState([]);
 
   const onChange = (event) => {
     const value = event.target.value.trim().toLowerCase();
@@ -46,17 +56,25 @@ const Workout = () => {
     });
 
     if (!exactHit && value !== "")
-      filteredCategories.push({ name: `Add ${value}`, new: true });
+      filteredCategories.push({ name: value, new: true });
 
     setFilteredCategories(filteredCategories);
   };
 
-  const selectCategory = (category) => {
+  const selectCategory = async (category) => {
+    if (category.new) {
+      await (
+        await fetch("/api/exerciseCategories", {
+          method: "POST",
+          body: JSON.stringify({ name: toTitleCase(category.name) }),
+        })
+      ).json();
+    }
     setPage("exercises");
   };
 
   const endWorkout = async () => {
-    if (sessionExercises.length === 0) {
+    if (activeLog.exercises === undefined || activeLog.exercises.length === 0) {
       await fetch(`/api/logs/${activeLog._id}`, { method: "DELETE" });
     } else {
     }
@@ -90,6 +108,24 @@ const Workout = () => {
     case "sets":
       return (
         <>
+          <StyledCard
+            title={
+              <CardTitle
+                title={
+                  activeLog ? (
+                    <SessionTimer startTime={activeLog.startTime} />
+                  ) : (
+                    <Skeleton active paragraph={false} title={{ width: 55 }} />
+                  )
+                }
+                onBack={() => router.back()}
+              />
+            }
+            headStyle={{ color: "#232323" }}
+            bordered={false}
+            className="mat-elevation-z3"
+            bodyStyle={{ padding: 0 }}
+          ></StyledCard>
           <ScrollableContainer>
             <StyledCard
               title={<CardTitle disableBack title="Bench Press" />}
@@ -171,7 +207,12 @@ const Workout = () => {
                     >
                       {item._id || item.new ? (
                         <span>
-                          {item.new && <PlusOutlined />} {item.name}
+                          {item.new && (
+                            <span>
+                              <PlusOutlined /> Add
+                            </span>
+                          )}{" "}
+                          {item.name}
                         </span>
                       ) : (
                         <Skeleton
@@ -207,9 +248,6 @@ const ScrollableContainer = styled.div`
 const StyledCard = styled(Card)`
   background: white;
   color: #232323;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   overflow: hidden;
 `;
 

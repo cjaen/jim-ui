@@ -5,21 +5,24 @@ import PrimaryButton from "../components/PrimaryButton";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import SessionContext from "../contexts/SessionContext";
 
 const workouts = ["Chest Day", "Back Day", "Leg Day", "Shoulder Day"];
 
 const Logs = () => {
   const router = useRouter();
+  const [nextPage, setNextPage] = useState(null);
 
   const { activeLog, setActiveLog, sessionContextLoaded } =
     useContext(SessionContext);
 
   const startWorkout = async () => {
     if (activeLog) {
+      setNextPage("continue");
       router.push(`/logs/${activeLog._id}`);
     } else {
+      setNextPage("start");
       const response = await (await fetch("/api/logs/startWorkout")).json();
       router.push(`/logs/${response._id}`);
       setActiveLog(response);
@@ -58,15 +61,16 @@ const Logs = () => {
           onClick={startWorkout}
           elevate
           flex="1"
-          loading={!sessionContextLoaded}
+          loading={!sessionContextLoaded || nextPage !== null}
         ></PrimaryButton>
-        {activeLog && (
+        {activeLog && (!activeLog || nextPage !== "start") && (
           <PrimaryButton
             label={<CloseCircleOutlined style={{ fontSize: 25 }} />}
             onClick={endWorkout}
             elevate
             flex="0 0 75px"
             color="#ff4d4f"
+            loading={nextPage !== null}
           ></PrimaryButton>
         )}
       </ButtonContainer>
