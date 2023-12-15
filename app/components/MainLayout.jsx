@@ -106,6 +106,8 @@ const MainLayout = ({ children }) => {
 
     result = result[1] === "logs" ? result[1] : result.slice(-1)[0];
 
+    setSelectedKeys([result]);
+
     result = result.replace(/([A-Z])/g, " $1");
 
     const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
@@ -117,6 +119,7 @@ const MainLayout = ({ children }) => {
       setDrawerIsOpen(false);
     }
   }, [isMobile]);
+
   return !isLoading && user ? (
     <StyledMainLayout>
       <Drawer

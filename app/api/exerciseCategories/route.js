@@ -1,8 +1,8 @@
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import clientPromise from "../../../lib/mongodb";
 import { NextResponse } from "next/server";
 
-const handle = async () => {
+const handleGet = async () => {
   const client = await clientPromise;
   const db = client.db("gymmy");
 
@@ -14,4 +14,26 @@ const handle = async () => {
   return NextResponse.json(categories);
 };
 
-export const GET = withApiAuthRequired(handle);
+const handlePost = async (req) => {
+  const res = new NextResponse();
+  const { user } = await getSession(req, res);
+  const client = await clientPromise;
+  const db = client.db("gymmy");
+  const body = await req.json();
+
+  const workout = await db
+    .collection("exerciseCategories")
+    .insertOne({ userId: user.sub, name: body.name });
+
+  return NextResponse.json(
+    {
+      _id: workout.insertedId,
+      userId: user.sub,
+      name: body.name,
+    },
+    res
+  );
+};
+
+export const GET = withApiAuthRequired(handleGet);
+export const POST = withApiAuthRequired(handlePost);
